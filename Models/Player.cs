@@ -12,6 +12,4 @@ public class Player
     public Int64? TotalScore { get; set; }
     public string? Email { get; set; }
     public string? Password { get; set; }
-
-    
 }

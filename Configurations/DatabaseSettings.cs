@@ -4,6 +4,7 @@ public class DatabaseSettings
 {
     public string ConnectionString { get; set; } = "";
     public string DatabaseName { get; set; } = "";
-    public string CollectionName { get; set; } = "";
+    public string PlayerCollection { get; set; } = "";
+    public string RoomCollection { get; set; } = "";
     
 }

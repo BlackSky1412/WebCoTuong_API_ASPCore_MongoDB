@@ -1,3 +1,4 @@
+﻿
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using WebCoTuong_API_ASPCore_MongoDB.Configurations;
@@ -5,23 +6,23 @@ using WebCoTuong_API_ASPCore_MongoDB.Models;
 
 namespace WebCoTuong_API_ASPCore_MongoDB.Services;
 
-public class PlayerService
+public class RoomService
 {
-    private readonly IMongoCollection<Player> _playerCollection;
+    private readonly IMongoCollection<Room> _roomCollection;
 
-    public PlayerService(IOptions<DatabaseSettings> databaseSettings)
+    public RoomService(IOptions<DatabaseSettings> databaseSettings)
     {
         var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
         var mongoDb = mongoClient.GetDatabase(databaseSettings.Value.DatabaseName);
-        _playerCollection = mongoDb.GetCollection<Player>(databaseSettings.Value.PlayerCollection);
+        _roomCollection = mongoDb.GetCollection<Room>(databaseSettings.Value.RoomCollection);
     }
-    
-    public async Task<List<Player>> GetAsync() => await _playerCollection.Find(_ => true).ToListAsync();
-    public async Task CreateAsync(Player player)
+
+    public async Task<List<Room>> GetAsync() => await _roomCollection.Find(_ => true).ToListAsync();
+    public async Task CreateAsync(Room room)
     {
         try
         {
-            await _playerCollection.InsertOneAsync(player);
+            await _roomCollection.InsertOneAsync(room);
         }
         catch (Exception ex)
         {
@@ -32,18 +33,18 @@ public class PlayerService
             throw;
         }
     }
-    public async Task<Player> GetAsync(string id)
+    public async Task<Room> GetAsync(string id)
     {
         try
         {
-            var player = await _playerCollection.Find(x => x.PlayerId == id).FirstOrDefaultAsync();
+            var room = await _roomCollection.Find(x => x.RoomId == id).FirstOrDefaultAsync();
 
-            if (player == null)
+            if (room == null)
             {
-                throw new Exception("Player not found");
+                throw new Exception("Room not found");
             }
 
-            return player;
+            return room;
         }
         catch (Exception ex)
         {
@@ -55,11 +56,11 @@ public class PlayerService
         }
     }
 
-    public async Task UpdateAsync(Player player)
+    public async Task UpdateAsync(Room room)
     {
         try
         {
-            await _playerCollection.ReplaceOneAsync(x => x.PlayerId == player.PlayerId, player);
+            await _roomCollection.ReplaceOneAsync(x => x.RoomId == room.RoomId, room);
         }
         catch (Exception ex)
         {
@@ -75,7 +76,7 @@ public class PlayerService
     {
         try
         {
-            await _playerCollection.DeleteOneAsync(x => x.PlayerId == id);
+            await _roomCollection.DeleteOneAsync(x => x.RoomId == id);
         }
         catch (Exception ex)
         {

@@ -1,14 +1,17 @@
 using WebCoTuong_API_ASPCore_MongoDB.Configurations;
 using WebCoTuong_API_ASPCore_MongoDB.Services;
+using WebCoTuong_API_ASPCore_MongoDB.SignaLR.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("MongoDBDatabase"));
-
 builder.Services.AddSingleton<PlayerService>();
+builder.Services.AddSingleton<RoomService>();
 
+builder.Services.AddRazorPages();
+builder.Services.AddSignalR(); // Thêm dịch vụ SignalR
 
 var app = builder.Build();
 
@@ -22,13 +25,19 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+#pragma warning disable ASP0014
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapRazorPages();
+    endpoints.MapHub<ChatHub>("/chatHub"); // Định tuyến hub SignalR
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
+#pragma warning restore ASP0014
 
 app.Run();
